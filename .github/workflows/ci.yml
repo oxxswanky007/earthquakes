@@ -12,3 +12,5 @@ jobs:
           python-version: "3.12"
       - run: pip install -r requirements.txt
       - run: python fetch_quakes.py
+      - run: docker build -t earthquakes .
+      - run: docker run earthquakes
