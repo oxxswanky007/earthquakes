@@ -14,3 +14,4 @@ jobs:
       - run: python fetch_quakes.py
       - run: docker build -t earthquakes .
       - run: docker run earthquakes
+      - run: docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:0.69.3@sha256:bcc376de8d77cfe086a917230e818dc9f8528e3c852f7b1aff648949b6258d1c image --severity HIGH,CRITICAL --exit-code 1 earthquakes
