@@ -2,6 +2,10 @@ name: CI
 
 on: [push]
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -15,3 +19,13 @@ jobs:
       - run: docker build -t earthquakes .
       - run: docker run earthquakes
       - run: docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:0.69.3@sha256:bcc376de8d77cfe086a917230e818dc9f8528e3c852f7b1aff648949b6258d1c image --severity HIGH,CRITICAL --exit-code 1 earthquakes
+      - name: Push image to GitHub Container Registry
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+          docker tag earthquakes ghcr.io/${{ github.repository }}:${{ github.sha }}
+          docker tag earthquakes ghcr.io/${{ github.repository }}:latest
+          docker push ghcr.io/${{ github.repository }}:${{ github.sha }}
+          docker push ghcr.io/${{ github.repository }}:latest
+
+
+      
